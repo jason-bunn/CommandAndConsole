@@ -9,6 +9,12 @@
 #include <SFML/Window/Event.hpp>
 
 #include <iostream>
+#include <vector>
+#include <string>
+
+
+
+
 class Application
 {
 public:
@@ -25,7 +31,7 @@ public:
 
     void                    Run();
     void                    Init();
-
+    void                    DefaultCom(const std::vector<std::string>& args);
 private:
     void                    ProcessInput();
     void                    Update(sf::Time dt);

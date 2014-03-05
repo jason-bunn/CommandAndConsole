@@ -20,7 +20,13 @@ Application::~Application()
 
 void Application ::Init()
 {
-    //mConsole = new GameConsole(mWindow);
+    std::cout << "Initializing Applicaiton" << std::endl;
+
+
+    mConsole.SetDefaultCommand([this] (const std::vector<std::string>& args)
+                               {
+                                   DefaultCom(args);
+                               });
 }
 
 void Application::Run()
@@ -79,7 +85,7 @@ void Application::ProcessInput()
         }
         if(event.type == sf::Event::TextEntered)
         {
-            std::cout << event.text.unicode << std::endl;
+            //std::cout << event.text.unicode << std::endl;
             if(mConsole.IsConsoleActive())
             {
                 mConsole.PassKey(static_cast<char>(event.text.unicode));
@@ -94,7 +100,7 @@ void Application::Update(sf::Time dt)
 {
     if(mConsole.IsConsoleActive())
     {
-        mConsole.Update();
+        mConsole.Update(dt);
     }
 
 }
@@ -108,4 +114,11 @@ void Application::Render()
     mWindow.setView(mWindow.getDefaultView());
     mConsole.Render();
     mWindow.display();
+}
+
+void Application::DefaultCom(const std::vector<std::string>& args)
+{
+    std::cout << "Calling default method" <<std::endl;
+    mConsole.Print(args[0]);
+    mConsole.Print(" is not a recognized command. \n");
 }
