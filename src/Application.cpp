@@ -20,6 +20,11 @@ Application::~Application()
 
 void Application ::Init()
 {
+    console_function foo;
+    foo = ([=] (const std::vector<std::string>& args)
+                                    {
+                                        CCExit(args);
+                                    });
     std::cout << "Initializing Applicaiton" << std::endl;
 
 
@@ -27,6 +32,8 @@ void Application ::Init()
                                {
                                    DefaultCom(args);
                                });
+
+    mConsole.AddItem("/exit", NULL, foo, CTYPE_FUNCTION);
 }
 
 void Application::Run()
@@ -119,6 +126,11 @@ void Application::Render()
 void Application::DefaultCom(const std::vector<std::string>& args)
 {
     std::cout << "Calling default method" <<std::endl;
-    mConsole.Print(args[0]);
-    mConsole.Print(" is not a recognized command. \n");
+    mConsole.Print(args[0] + " is not a recognized command. \n");
+    //mConsole.Print(" is not a recognized command. \n");
+}
+
+void Application::CCExit(const std::vector<std::string>& args)
+{
+    mWindow.close();
 }

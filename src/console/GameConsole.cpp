@@ -11,20 +11,21 @@ GameConsole::GameConsole(sf::RenderWindow& window)
 , mCommandBufferSize(20)
 , mTextBufferSize(50)
 , mCommandEcho(true)
+
 {
     mFont.loadFromFile("media/arial.ttf");
 
     backgroundRect.setFillColor(sf::Color(20,20,20));
-    backgroundRect.setOutlineThickness(5);
-    backgroundRect.setOutlineColor(sf::Color(200,200,200));
+    backgroundRect.setOutlineThickness(1);
+    backgroundRect.setOutlineColor(sf::Color(255,179,0));
 
     mCurrentCommand.setFont(mFont);
-    mCurrentCommand.setCharacterSize(20);
+    mCurrentCommand.setCharacterSize(16);
     mCurrentCommand.setPosition(5, 74);
     mCurrentCommand.setColor(sf::Color(255,179,0));
 
     mCursor.setFont(mFont);
-    mCursor.setCharacterSize(20);
+    mCursor.setCharacterSize(16);
     mCursor.setPosition(5,74);
     mCursor.setColor(sf::Color(255,179,0));
     mCursor.setString("_");
@@ -67,7 +68,16 @@ void GameConsole::Render()
 {
     if(bActive)
     {
+        int i = 0;
         mWindow.draw(backgroundRect);
+        for(auto itr = mTextDisplay.rbegin(); itr != mTextDisplay.rend(); ++itr)
+        {
+
+            itr->setPosition(5, 58 - (i * itr->getCharacterSize()));
+
+            mWindow.draw((*itr));
+            i++;
+        }
         mWindow.draw(mCurrentCommand);
         mWindow.draw(mCursor);
     }
@@ -109,13 +119,18 @@ void GameConsole::RemoveItem(const std::string& strName)
 
 void GameConsole::Print(const std::string& strText)
 {
+    sf::Text text(strText, mFont);
+    text.setColor(sf::Color(255,179,0));
+    text.setCharacterSize(16);
 
+    mTextDisplay.push_back(text);
     mTextBuffer.push_back(strText);
 
     //check bounds
     if(mTextBuffer.size() > mTextBufferSize)
     {
         mTextBuffer.pop_front();
+        mTextDisplay.pop_front();
     }
 }
 
@@ -196,6 +211,7 @@ bool GameConsole::ParseCommandLine()
     //execute
     if(mItemList.empty())
     {
+        mCommandLine ="";
         std::cout << "Command database empty" << std::endl;
         return false;
     }
@@ -215,6 +231,7 @@ bool GameConsole::ParseCommandLine()
                     out.str("");
                     out << (*itr).name << " = " << *((unsigned char *)(*itr).variable_ptr);
                     Print(out.str());
+
                     return true;
                 }
                 else if(arguments.size() == 2)
@@ -351,8 +368,12 @@ bool GameConsole::ParseCommandLine()
 
             }
         }
+        else
+        {
+            defaultCommand(arguments);
+        }
     }
-
+    mCommandLine ="";
     return true;
 }
 

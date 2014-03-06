@@ -62,6 +62,7 @@ private:
     sf::Font                mFont;
     sf::Text                mCurrentCommand;
     sf::Text                mCursor;
+    std::list<sf::Text>   mTextDisplay;
 
     sf::Time                mBlinkTime;
     sf::Time                mBlinkTimer;

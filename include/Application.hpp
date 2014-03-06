@@ -32,6 +32,7 @@ public:
     void                    Run();
     void                    Init();
     void                    DefaultCom(const std::vector<std::string>& args);
+    void                    CCExit(const std::vector<std::string>& args);
 private:
     void                    ProcessInput();
     void                    Update(sf::Time dt);
