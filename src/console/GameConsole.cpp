@@ -123,15 +123,20 @@ void GameConsole::Print(const std::string& strText)
     text.setColor(sf::Color(255,179,0));
     text.setCharacterSize(16);
 
+
     mTextDisplay.push_back(text);
     mTextBuffer.push_back(strText);
 
     //check bounds
+
     if(mTextBuffer.size() > mTextBufferSize)
     {
+
         mTextBuffer.pop_front();
+
         mTextDisplay.pop_front();
     }
+
 }
 
 void GameConsole::PassKey(char key)
@@ -173,16 +178,18 @@ bool GameConsole::ParseCommandLine()
 
 
     std::ostringstream out;
-    std::string::size_type index = 0;
+    size_t index = 0;
     std::vector<std::string> arguments;
     ITEM_DB::const_iterator itr;
 
     if(mCommandEcho)
     {
+        //std::cout << "Echo" << std::endl;
         Print(mCommandLine);
     }
 
     //add command line to buffer
+    std::cout << "pushing command line into buffer" <<std::endl;
     mCommandBuffer.push_back(mCommandLine);
     if(mCommandBuffer.size() > mCommandBufferSize)
     {
@@ -190,12 +197,19 @@ bool GameConsole::ParseCommandLine()
     }
 
     //tokenize
+    std::cout << "Starting split" << std::endl;
+    size_t next_space = 0;
     while(index != std::string::npos)
     {
         //push word
-        std::string::size_type next_space = mCommandLine.find(' ');
-        arguments.push_back(mCommandLine.substr(index, next_space));
+        next_space = mCommandLine.find(' ');
 
+
+
+        arguments.push_back(mCommandLine.substr(0, next_space));
+        //std::cout << mCommandLine.substr(0, next_space) <<std::endl;
+        //std::cout << arguments[0] <<std::endl;
+        mCommandLine.erase(0, next_space + 1);
         //increment index
         if(next_space != std::string::npos)
         {
@@ -204,6 +218,7 @@ bool GameConsole::ParseCommandLine()
         }
         else
         {
+
             break;
         }
 
@@ -215,6 +230,7 @@ bool GameConsole::ParseCommandLine()
         std::cout << "Command database empty" << std::endl;
         return false;
     }
+    mCommandLine ="";
     for(itr = mItemList.begin(); itr != mItemList.end(); ++itr)
     {
         if(itr->name == arguments[0])
@@ -333,11 +349,12 @@ bool GameConsole::ParseCommandLine()
                 break;
 
             case CTYPE_STRING:
+                std::cout << "Case String" << std::endl;
 
                 if(arguments.size() == 1)
                 {
                     out.str("");
-                    out << (*itr).name << " = " << (std::string *)(*itr).variable_ptr;
+                    out << (*itr).name << " = " << *(std::string *)(*itr).variable_ptr;
                     Print(out.str());
                     return false;
                 }
@@ -347,7 +364,7 @@ bool GameConsole::ParseCommandLine()
                     *((std::string *)(*itr).variable_ptr) = "";
 
                     //add new string
-                    for(int i=0; i < arguments.size(); ++i)
+                    for(int i=1; i < arguments.size(); ++i)
                     {
                         *((std::string *)(*itr).variable_ptr) += arguments[i];
                     }
@@ -369,8 +386,10 @@ bool GameConsole::ParseCommandLine()
             }
         }
         else
-        {
-            defaultCommand(arguments);
+        {   //check to see if we are at the end of the item list
+            if(itr != mItemList.end() && (next(itr)== mItemList.end()))
+                defaultCommand(arguments);
+            //return false;
         }
     }
     mCommandLine ="";

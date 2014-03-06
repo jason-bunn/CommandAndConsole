@@ -20,7 +20,7 @@ class Application
 public:
     sf::RenderWindow        mWindow;
     GameConsole             mConsole;
-
+    std::string             mTestString;
 private:
     static const sf::Time   TimePerFrame;
 

@@ -9,6 +9,7 @@ const sf::Time Application::TimePerFrame = sf::seconds(1.0f/60.0f);
 Application::Application()
 : mWindow(sf::VideoMode(1024, 768), "In Game Console Test")
 , mConsole(mWindow)
+, mTestString("")
 {
 
 }
@@ -34,6 +35,7 @@ void Application ::Init()
                                });
 
     mConsole.AddItem("/exit", NULL, foo, CTYPE_FUNCTION);
+    mConsole.AddItem("mTestString", &mTestString, NULL, CTYPE_STRING);
 }
 
 void Application::Run()
